@@ -419,13 +419,3 @@ VLA 论文、模型、数据集、benchmark 的综合清单，适合每周扫一
 9. 能不能接到 LeRobot？
 10. 对我们当前 XR 遥操系统有什么直接启发？
 ```
-
-## 8. 后续可拆分的技术文档
-
-后面可以继续把这份笔记拆成几份更工程化的文档：
-
-- `01_lerobot_data_schema.md`：XR 遥操数据如何对齐 LeRobot。
-- `02_policy_baselines.md`：ACT / DP / pi0 / pi0.5 的适用场景和训练配置。
-- `03_planner_and_context.md`：上层 subtask planner、memory、success detector。
-- `04_hil_serl_loop.md`：真机强化、人工接管、奖励分类器和数据回流。
-- `05_world_model_wam.md`：World Model / WAM / MEM 的前沿路线和可落地点。
