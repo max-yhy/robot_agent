@@ -275,7 +275,22 @@ MEM 和 context 解决的是长任务中“当前帧不够用”的问题。
 
 ## 5. 主流系列和团队
 
-### Physical Intelligence / pi
+这一节按学习优先级分成三层。第一梯队是必须追的主线，第二梯队是需要补充的关键系列，第三梯队是观察项。这样读论文时不会被公司新闻牵着走，而是围绕我们的工程缺口来吸收。
+
+```text
+第一梯队：必须追
+pi / LeRobot / Google DeepMind / Stanford-Berkeley / NVIDIA
+
+第二梯队：需要补
+Skild AI / Figure AI / 1X / Covariant / AgiBot-Galaxea-Xiaomi
+
+第三梯队：观察即可
+Tencent Tairos / LingBot-Robbyant / Generalist / Field AI / Dyna Robotics / TRI-Boston Dynamics
+```
+
+### 第一梯队：必须追
+
+#### Physical Intelligence / pi
 
 [www.pi.website](https://www.pi.website/)
 
@@ -297,7 +312,7 @@ Physical Intelligence 的 pi 系列是目前最值得跟的一条 VLA 主线，�
 - 数据格式中最好显式记录 subtask、success/failure、human intervention、reward 或 preference。
 - 后续如果做 HIL-SERL，可以把它看成 pi*0.6 方向的轻量真机版本。
 
-### Hugging Face LeRobot
+#### Hugging Face LeRobot
 
 LeRobot 应该是我们的工程主干。它的价值不是提出一个最前沿概念，而是把 dataset、policy、training、evaluation、teleoperation、real robot deployment 串成可复用工具链。对我们来说，XR 遥操采数、ACT/DP/pi0/pi0.5 训练、策略回放、真机部署都应该尽量贴着 LeRobot 的数据结构和接口走。
 
@@ -311,7 +326,7 @@ LeRobot 应该是我们的工程主干。它的价值不是提出一个最前沿
 
 如果后面要引入 MEM/context，LeRobot 数据里就要提前保留 task history、subtask id、失败标签、人工接管片段、恢复动作等字段。
 
-### Google DeepMind
+#### Google DeepMind
 
 [deepmind.google/models/gemini-robotics](https://deepmind.google/models/gemini-robotics/)
 
@@ -323,7 +338,7 @@ RT-1、RT-2、Gemini Robotics / Gemini Robotics-ER 重点学 VLA + 高层 embodi
 - 低层 ACT/DP/pi policy 只负责短程可执行技能。
 - VLM/MLLM 可以做 scene parsing、subtask generation、failure explanation 和 recovery proposal。
 
-### Stanford / UC Berkeley
+#### Stanford / UC Berkeley
 
 OpenVLA、Octo、DROID、BridgeData，重点学开源 VLA 和数据规模化。
 
@@ -335,11 +350,13 @@ OpenVLA、Octo、DROID、BridgeData，重点学开源 VLA 和数据规模化。
 - Octo：通用机器人 policy 如何用多机器人数据训练，并适配新任务。
 - OpenVLA：开源 VLA 如何把视觉语言模型和动作输出接起来。
 
-### NVIDIA
+#### NVIDIA
+
+[research.nvidia.com/labs/cosmos-lab](https://research.nvidia.com/labs/cosmos-lab/)
 
 [research.nvidia.com/labs/cosmos-lab/cosmos-policy](https://research.nvidia.com/labs/cosmos-lab/cosmos-policy/) Cosmos Policy: Fine-Tuning Video Models for Visuomotor Control and Planning
 
-NVIDIA 的 Cosmos Policy 很适合放在 WA/WAM/World Model 这条线里学。它的核心思想是：不要只把视频模型当作视觉特征提取器，而是把预训练视频模型通过 post-training 改造成能生成动作、预测未来状态、估计 value 的机器人策略。
+NVIDIA 这条线要分两块看：一块是 Cosmos / Cosmos Policy，代表 World Model、视频模型、future prediction 和 WAM；另一块是 GR00T / Isaac Sim / Isaac Lab，代表仿真、合成数据、humanoid VLA 和 sim-to-real 工具链。
 
 这和 ACT / DP 最大的区别是：ACT / DP 主要学习 demonstration 里的动作分布；Cosmos Policy 还试图利用视频模型已有的时间、运动和物理先验，让模型具备“预测执行后会发生什么”的能力。
 
@@ -348,8 +365,78 @@ NVIDIA 的 Cosmos Policy 很适合放在 WA/WAM/World Model 这条线里学。�
 - latent frame injection 如何把 action/state/value 编进视频模型 latent。
 - future image prediction 和 action chunk 如何一起生成。
 - direct policy 和 model-based planning 两种部署方式的区别。
+- Isaac Sim / Isaac Lab 如何服务 sim-to-real 和 synthetic data。
+- GR00T 如何定义 humanoid / cross-embodiment 的 VLA 接口。
 
-### Tencent Tairos
+### 第二梯队：需要补
+
+#### Skild AI
+
+Skild AI 要补进来，因为它代表“通用机器人 brain / cross-embodiment foundation model”路线。它和 pi 的问题意识相近：一个模型如何跨不同机器人身体、不同任务、不同场景泛化。
+
+对我们来说，Skild 的价值不是马上复现，而是帮助理解 cross-embodiment 的设计问题：不同机器人 state/action 空间不一样，数据怎么统一？模型输出是低层控制、技能、还是中间动作表示？这会影响我们以后 XR 数据是否能服务多个机械臂或移动操作平台。
+
+建议关注：
+
+- 它如何定义 robot brain。
+- 是否强调跨机器人身体迁移。
+- 数据是否来自真实机器人、仿真、视频，还是混合来源。
+- 和 pi / GR00T / OpenVLA 的差异。
+
+#### Figure AI / Helix
+
+Figure AI 代表垂直整合 humanoid 路线：模型、机器人本体、数据闭环、产品场景都在自己体系里。Helix 这类工作适合观察“一个 VLA/robot brain 如何服务自家 humanoid”。
+
+它和我们的关系偏系统设计：如果模型不是开源通用，而是围绕固定硬件和固定场景持续迭代，那么数据采集、部署、在线回流、任务定义会怎么做。它不一定直接指导我们训练 ACT/DP，但适合补“产品化机器人闭环”的视角。
+
+建议关注：
+
+- humanoid 的 whole-body control 和 manipulation 如何分层。
+- 语言任务如何落到具体动作。
+- 真实用户场景中如何采集失败和纠错数据。
+- 模型是否只适配自家硬件。
+
+#### 1X / World Model
+
+1X 适合放到 World Model / video-to-action 方向里看。它的重点不是单个机械臂 policy，而是机器人如何利用视频、历史经验和世界预测来学习动作。
+
+这条线和我们提到的 WA / WAM / MEM 很接近。后续如果我们要做 subgoal image、future image prediction、long-horizon context，1X 的思路可以和 NVIDIA Cosmos、WAM survey 一起看。
+
+建议关注：
+
+- 是否用 human video 或 robot video 学世界动态。
+- world model 如何和 inverse dynamics / action model 结合。
+- 模型是否服务 humanoid 长任务。
+- 是否有 memory/context 机制。
+
+#### Covariant / RFM
+
+Covariant 的 RFM 系列适合补“工业机器人 foundation model”这一块。它比很多实验室 VLA 更接近真实物流、拣选、分拣和仓储场景，强调 fleet data 和工业部署。
+
+对我们来说，它的启发是：真实部署不只是模型好看，还要有稳定的数据回流、异常处理、任务评估和场景约束。它适合和 LeRobot / HIL-SERL 一起看，理解真实系统怎样持续变好。
+
+建议关注：
+
+- RFM 如何利用 fleet data。
+- 任务是否偏工业 pick-and-place / bin picking。
+- 是否有失败恢复和在线改进。
+- 和通用 VLA 相比，工业场景带来了哪些约束。
+
+#### AgiBot / Galaxea / Xiaomi Robotics
+
+国内开源和机器人平台生态建议补这几条。Tencent Tairos 可以继续保留，但还可以加入 AgiBot、GalaxeaVLA、Xiaomi-Robotics-0 这些更直接对应 VLA、数据、部署和开源模型的系列。
+
+这一组适合我们观察国产 VLA 的工程兼容性：模型权重是否开源，能不能在 SO-100/101、DROID、LIBERO、RoboTwin 或真实机械臂上跑，数据格式能不能转到 LeRobot。
+
+建议关注：
+
+- AgiBot：大规模机器人数据、真实机器人平台、国产 embodied data 生态。
+- GalaxeaVLA：G0.5、真实机器人 zero-shot / fine-tuning 入口、GitHub 工程可用性。
+- Xiaomi-Robotics-0：国产开源 VLA / robotics foundation model，适合观察模型结构和 benchmark。
+
+### 第三梯队：观察即可
+
+#### Tencent Tairos
 
 [tairos.tencent.com/openSourceModels](https://tairos.tencent.com/openSourceModels)
 
@@ -363,7 +450,7 @@ Tencent Tairos 可以作为国内开源 VLA / 机器人基础模型路线的观�
 - 是否支持语言条件、状态输入、动作 chunk 或连续控制。
 - 有没有真实机器人实验，而不是只在仿真或视频里展示。
 
-### LingBot / Robbyant
+#### LingBot / Robbyant
 
 [www.robbyant.com](https://www.robbyant.com/)
 
@@ -376,7 +463,7 @@ LingBot / Robbyant 这一类更偏国内具身智能产品化路线，重点不�
 - 机器人失败时怎么恢复，是重新询问人、重新规划，还是直接重试。
 - 它的数据闭环怎么做：遥操、用户反馈、日志回放、在线修正。
 
-### Generalist
+#### Generalist
 
 [generalistai.com](https://generalistai.com/)
 
@@ -388,6 +475,16 @@ Generalist 这一类可以放在“机器人基础模型创业公司/通用智�
 - 是否公布数据来源、机器人平台、任务覆盖范围。
 - 有没有和 VLA、world model、memory/context、RL from experience 相关的技术细节。
 - 是否能给我们提供系统设计上的启发，比如技能库、云端训练、远程遥操、数据闭环。
+
+#### Field AI / Dyna Robotics
+
+这两个可以作为“机器人自主性和连续改进”方向的观察项。Field AI 更偏 field robotics / physics-first autonomy，Dyna Robotics 更偏从真实部署和自主数据中持续提升。
+
+对我们当前机械臂系统来说，它们不是第一优先级，但可以帮助观察 embodied AI 是否正在从离线训练走向 deployed data loop。
+
+#### Toyota Research Institute / Boston Dynamics
+
+这条线适合观察 whole-body behavior model、humanoid、双足移动和全身操作。它和我们当前桌面机械臂不完全一样，但对理解 humanoid VLA、whole-body control、低层控制和高层任务之间的分工很有价值。
 
 ## 6. 持续追踪网站
 
